@@ -7,7 +7,7 @@ import ome_tiled
 
 # written out rather than read from __all__, so a name dropped from the package
 # fails here instead of leaving nothing to parametrize
-CONFIGURATION_STRINGS = ["ome_tiled:APPLICATION_OME_ZARR"]
+CONFIGURATION_STRINGS = ["ome_tiled:OME_ZARR_MIMETYPE"]
 
 
 @pytest.mark.parametrize("path", CONFIGURATION_STRINGS)

@@ -1,3 +1,3 @@
-from ome_tiled._ngff import APPLICATION_OME_ZARR
+from ome_tiled._ngff import OME_ZARR_MIMETYPE
 
-__all__ = ["APPLICATION_OME_ZARR"]
+__all__ = ["OME_ZARR_MIMETYPE"]
