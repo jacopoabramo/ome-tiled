@@ -125,3 +125,37 @@ def test_unsupported_group_is_served_as_plain_zarr_and_logged(
     assert adapter.structure_family == StructureFamily.container
     assert list(adapter) == ["0"]
     assert logged in caplog.text
+
+
+@pytest.mark.usefixtures("acquire_zarr_store", "ome_writers_acquire_zarr_store")
+def test_detection_hook_routes_every_ome_zarr_store(
+    client: Container, data_dir: Path
+) -> None:
+    anyio.run(
+        lambda: register(
+            client,
+            data_dir,
+            adapters_by_mimetype={OME_ZARR_MIMETYPE: OmeZarrAdapter},
+            mimetype_detection_hook="ome_tiled:detect",
+        )
+    )
+
+    assert client["run"]["det"].structure().dims == THREE_DIMS
+    assert client["acquire"].structure().dims == FOUR_DIMS
+
+
+@pytest.mark.usefixtures("acquire_zarr_store", "ome_writers_acquire_zarr_store")
+def test_extension_route_misses_a_store_named_zarr(
+    client: Container, data_dir: Path
+) -> None:
+    anyio.run(
+        lambda: register(
+            client,
+            data_dir,
+            adapters_by_mimetype={OME_ZARR_MIMETYPE: OmeZarrAdapter},
+            mimetypes_by_file_ext={".ome.zarr": OME_ZARR_MIMETYPE},
+        )
+    )
+
+    assert client["acquire"].structure().dims == FOUR_DIMS
+    assert client["run"]["det"]["0"].structure().dims is None

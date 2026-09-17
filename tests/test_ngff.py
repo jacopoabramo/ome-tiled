@@ -1,12 +1,16 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pytest
 from tiled.utils import import_object
 
 import ome_tiled
+from ome_tiled import OME_ZARR_MIMETYPE, detect
 from ome_tiled._ngff import NgffImage, NgffSkipped, classify
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 AXES = [
     {"name": "t", "type": "time"},
@@ -26,7 +30,11 @@ EXPECTED = NgffImage(dims=("t", "z", "y", "x"), axes=tuple(AXES), path="0")
 
 # written out rather than read from __all__, so a name dropped from the package
 # fails here instead of leaving nothing to parametrize
-CONFIGURATION_STRINGS = ["ome_tiled:OME_ZARR_MIMETYPE", "ome_tiled:OmeZarrAdapter"]
+CONFIGURATION_STRINGS = [
+    "ome_tiled:OME_ZARR_MIMETYPE",
+    "ome_tiled:OmeZarrAdapter",
+    "ome_tiled:detect",
+]
 
 
 @pytest.mark.parametrize("path", CONFIGURATION_STRINGS)
@@ -79,3 +87,37 @@ def test_other_ngff_groups_are_skipped_with_a_reason(
 @pytest.mark.parametrize("attributes", [{}, {"foo": 1}], ids=["empty", "unrelated"])
 def test_plain_groups_are_not_ngff(attributes: dict[str, Any]) -> None:
     assert classify(attributes) is None
+
+
+@pytest.mark.parametrize(
+    "store",
+    [
+        "ome_writers_acquire_zarr_store",
+        "acquire_zarr_store",
+        "ngff04_store",
+        "ngff05_store",
+        "bioformats2raw_store",
+    ],
+)
+def test_ome_zarr_stores_are_detected(
+    request: pytest.FixtureRequest, store: str
+) -> None:
+    path: Path = request.getfixturevalue(store)
+
+    assert detect(path, "application/x-zarr") == OME_ZARR_MIMETYPE
+
+
+@pytest.mark.parametrize(
+    ("target", "mimetype"),
+    [
+        ("plain_zarr_store", "application/x-zarr"),
+        ("plain_directory", None),
+        ("text_file", "text/csv"),
+    ],
+)
+def test_anything_else_keeps_its_mimetype(
+    request: pytest.FixtureRequest, target: str, mimetype: str | None
+) -> None:
+    path: Path = request.getfixturevalue(target)
+
+    assert detect(path, mimetype) == mimetype

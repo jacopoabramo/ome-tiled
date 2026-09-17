@@ -97,6 +97,27 @@ def bioformats2raw_store(data_dir: Path) -> Path:
     return path
 
 
+@pytest.fixture
+def plain_zarr_store(data_dir: Path) -> Path:
+    path = data_dir / "plain.zarr"
+    zarr.open_group(path, mode="w").create_array("frames", shape=(4,), dtype="u1")
+    return path
+
+
+@pytest.fixture
+def plain_directory(data_dir: Path) -> Path:
+    path = data_dir / "notes"
+    path.mkdir()
+    return path
+
+
+@pytest.fixture
+def text_file(data_dir: Path) -> Path:
+    path = data_dir / "table.csv"
+    path.write_text("a,b\n1,2\n")
+    return path
+
+
 def write_ome_writers(
     root: Path, backend: Literal["acquire-zarr", "zarr-python"]
 ) -> Path:

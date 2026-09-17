@@ -18,3 +18,10 @@
       adapters_by_mimetype={"application/x-ome-zarr": "ome_tiled:OmeZarrAdapter"},
   )
   ```
+- `detect` (`ome_tiled`): a `tiled` mimetype detection hook returning
+  `OME_ZARR_MIMETYPE` for a directory whose root group carries NGFF metadata,
+  or whose plain root holds an NGFF image, and the given mimetype otherwise.
+
+  ```console
+  tiled serve directory data/ --mimetype-hook ome_tiled:detect
+  ```

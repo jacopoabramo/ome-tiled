@@ -1,4 +1,4 @@
 from ome_tiled._adapter import OmeZarrAdapter
-from ome_tiled._ngff import OME_ZARR_MIMETYPE
+from ome_tiled._ngff import OME_ZARR_MIMETYPE, detect
 
-__all__ = ["OME_ZARR_MIMETYPE", "OmeZarrAdapter"]
+__all__ = ["OME_ZARR_MIMETYPE", "OmeZarrAdapter", "detect"]

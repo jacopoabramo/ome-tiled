@@ -4,11 +4,14 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Final
 
 import yaozarrs
+import zarr
 from pydantic import ValidationError
 from yaozarrs import v04, v05
+from zarr.errors import ContainsArrayError, GroupNotFoundError
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
+    from pathlib import Path
 
 OME_ZARR_MIMETYPE: Final = "application/x-ome-zarr"
 """Mimetype under which a catalog routes OME-Zarr data to ``OmeZarrAdapter``."""
@@ -72,3 +75,24 @@ def classify(attributes: Mapping[str, Any]) -> NgffImage | NgffSkipped | None:
         axes=axes,
         path=multiscale.datasets[0].path,
     )
+
+
+def detect(path: Path, mimetype: str | None) -> str | None:
+    """Return ``OME_ZARR_MIMETYPE`` for an OME-Zarr store, *mimetype* for anything else.
+
+    A directory is an OME-Zarr store when its root group carries NGFF metadata,
+    or when a group directly under a plain root is an NGFF image. Pass it to
+    ``tiled`` as ``mimetype_detection_hook``.
+    """
+    if not path.is_dir():
+        return mimetype
+    try:
+        root = zarr.open_group(path, mode="r")
+    except (GroupNotFoundError, ContainsArrayError):
+        return mimetype
+    if classify(root.attrs.asdict()) is not None:
+        return OME_ZARR_MIMETYPE
+    for _, child in root.groups():
+        if isinstance(classify(child.attrs.asdict()), NgffImage):
+            return OME_ZARR_MIMETYPE
+    return mimetype
