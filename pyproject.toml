@@ -54,7 +54,6 @@ disable_error_code = [
 pretty = true
 strict = true
 warn_unreachable = true
-warn_no_return = true
 
 [tool.coverage.run]
 source = ["ome_tiled"]
@@ -74,7 +73,7 @@ extend-select = [
     "TC", # enable type check imports
     "FA102", # force __future__ imports
 ]
-ignore = ["D100","D104"] # https://docs.astral.sh/ruff/rules/undocumented-public-package/
+ignore = ["D100", "D104"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*.py" = [
@@ -109,12 +108,10 @@ commands = [["mypy"]]
 [tool.tox.env.tests]
 commands = [["pytest", "-q", { replace = "posargs", extend = true }]]
 
-# https://coverage.readthedocs.io/en/latest/config.html
 [tool.coverage.report]
 exclude_lines = ["if TYPE_CHECKING:"]
 
 [tool.pytest.ini_options]
-minversion = "6.0"
 testpaths = [
     "tests",
 ]
