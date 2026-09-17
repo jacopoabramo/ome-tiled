@@ -24,7 +24,7 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
 ]
 license = { text = "Apache-2.0" }
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.14"
 dependencies = [
     "tiled[server]>=0.2.18",
     "yaozarrs>=0.3.2",
