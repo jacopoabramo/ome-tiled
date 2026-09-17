@@ -1,27 +1,14 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+Changes to `redsun.experimental` that are not yet released are listed in the
+[experimental changelog](changelog-experimental.md).
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+Dates are specified in the format `DD-MM-YYYY`.
+
 ## Unreleased
 
-### Added
-
-- `OME_ZARR_MIMETYPE` (`ome_tiled`): the mimetype, `application/x-ome-zarr`,
-  under which a catalog routes OME-Zarr data to `OmeZarrAdapter`.
-- `OmeZarrAdapter` (`ome_tiled`): a `tiled` adapter serving an NGFF 0.4 or 0.5
-  image, registered by its group or by its full-resolution array, as one array
-  whose `dims` are the axes' names, with the axes under `axes` in the metadata.
-  A group holding images presents each as such an array; any other group is
-  served as `tiled`'s Zarr adapter serves it.
-
-  ```python
-  catalog_from_uri(
-      ...,
-      adapters_by_mimetype={"application/x-ome-zarr": "ome_tiled:OmeZarrAdapter"},
-  )
-  ```
-- `detect` (`ome_tiled`): a `tiled` mimetype detection hook returning
-  `OME_ZARR_MIMETYPE` for a directory whose root group carries NGFF metadata,
-  or whose plain root holds an NGFF image, and the given mimetype otherwise.
-
-  ```console
-  tiled serve directory data/ --mimetype-hook ome_tiled:detect
-  ```
+Initial release.
