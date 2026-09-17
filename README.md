@@ -1,3 +1,10 @@
+[![PyPI](https://img.shields.io/pypi/v/ome-tiled.svg?color=green)](https://pypi.org/project/ome-tiled)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ome-tiled)](https://pypi.org/project/ome-tiled)
+[![codecov](https://codecov.io/gh/redsun-acquisition/ome-tiled/graph/badge.svg)](https://codecov.io/gh/redsun-acquisition/ome-tiled)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 # ome-tiled
 
 An adapter for [`tiled`](https://github.com/bluesky/tiled) that serves OME-Zarr
