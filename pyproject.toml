@@ -27,6 +27,7 @@ license = { text = "Apache-2.0" }
 requires-python = ">=3.11"
 dependencies = [
     "tiled[server]>=0.2.18",
+    "yaozarrs>=0.3.2",
     "zarr>=3.1.6",
 ]
 
@@ -134,7 +135,7 @@ addopts = "-p no:warnings"
 dev = [
     "acquire-zarr>=0.10.0",
     "mypy>=2.3.1",
-    "ome-writers[acquire-zarr]>=0.3.2",
+    "ome-writers[acquire-zarr,zarr-python]>=0.3.2",
     "prek>=0.5.3",
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",

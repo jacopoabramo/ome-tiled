@@ -2795,6 +2795,7 @@ name = "ome-tiled"
 source = { editable = "." }
 dependencies = [
     { name = "tiled", extra = ["server"] },
+    { name = "yaozarrs" },
     { name = "zarr", version = "3.1.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "zarr", version = "3.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
@@ -2803,7 +2804,7 @@ dependencies = [
 dev = [
     { name = "acquire-zarr" },
     { name = "mypy" },
-    { name = "ome-writers", extra = ["acquire-zarr"] },
+    { name = "ome-writers", extra = ["acquire-zarr", "zarr-python"] },
     { name = "prek" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -2814,6 +2815,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "tiled", extras = ["server"], specifier = ">=0.2.18" },
+    { name = "yaozarrs", specifier = ">=0.3.2" },
     { name = "zarr", specifier = ">=3.1.6" },
 ]
 
@@ -2821,7 +2823,7 @@ requires-dist = [
 dev = [
     { name = "acquire-zarr", specifier = ">=0.10.0" },
     { name = "mypy", specifier = ">=2.3.1" },
-    { name = "ome-writers", extras = ["acquire-zarr"], specifier = ">=0.3.2" },
+    { name = "ome-writers", extras = ["acquire-zarr", "zarr-python"], specifier = ">=0.3.2" },
     { name = "prek", specifier = ">=0.5.3" },
     { name = "pytest", specifier = ">=9.1.1" },
     { name = "pytest-cov", specifier = ">=7.1.0" },
@@ -2849,6 +2851,9 @@ wheels = [
 [package.optional-dependencies]
 acquire-zarr = [
     { name = "acquire-zarr" },
+]
+zarr-python = [
+    { name = "yaozarrs", extra = ["write-zarr"] },
 ]
 
 [[package]]
@@ -4784,6 +4789,10 @@ wheels = [
 [package.optional-dependencies]
 io = [
     { name = "fsspec", extra = ["http", "s3"] },
+]
+write-zarr = [
+    { name = "zarr", version = "3.1.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "zarr", version = "3.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
 
 [[package]]
