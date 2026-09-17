@@ -1,17 +1,143 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
 [project]
 name = "ome-tiled"
-version = "0.1.0"
-description = "Add your description here"
+dynamic = ["version"]
+description = "A tiled adapter that serves OME-Zarr images with their axis names."
 readme = "README.md"
-authors = [
-    { name = "Jacopo Abramo", email = "jacopo.abramo@gmail.com" }
+authors = [{ name = "Jacopo Abramo", email = "jacopo.abramo@gmail.com" }]
+maintainers = [{ name = "Jacopo Abramo", email = "jacopo.abramo@gmail.com" }]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Typing :: Typed",
+    "License :: OSI Approved :: Apache Software License",
 ]
+license = { text = "Apache-2.0" }
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "tiled[server]>=0.2.18",
+    "zarr>=3.1.6",
+]
 
-[project.scripts]
-ome-tiled = "ome_tiled:main"
+[project.urls]
+bugs = "https://github.com/jacopoabramo/ome-tiled/issues"
+changelog = "https://github.com/jacopoabramo/ome-tiled/blob/main/CHANGELOG.md"
+homepage = "https://github.com/jacopoabramo/ome-tiled"
 
-[build-system]
-requires = ["uv_build>=0.12.15,<0.13.0"]
-build-backend = "uv_build"
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ome_tiled"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/ome_tiled/**"]
+
+[tool.mypy]
+files = "."
+disable_error_code = [
+    "import-untyped",
+    "no-untyped-call"
+]
+pretty = true
+strict = true
+warn_unreachable = true
+warn_no_return = true
+
+[tool.coverage.run]
+source = ["ome_tiled"]
+
+# CI combines data from Linux, macOS and Windows runners, each checking out
+# the repository under a different absolute path
+[tool.coverage.paths]
+source = ["src/", "*/src/"]
+
+[tool.ruff]
+fix = true
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+extend-select = [
+    "D", # enable docstring checks
+    "I", # enable imports checks
+    "TC", # enable type check imports
+    "FA102", # force __future__ imports
+]
+ignore = ["D100","D104"] # https://docs.astral.sh/ruff/rules/undocumented-public-package/
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = [
+    # ignore missing docstrings in tests
+    "D101",
+    "D102",
+    "D103",
+    # ignore type check imports in tests
+    "TC",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.tox]
+requires = ["tox>=4.28", "tox-uv-bare>=1.36"]
+env_list = ["lint", "mypy", "tests"]
+
+[tool.tox.env_run_base]
+runner = "uv-venv-lock-runner"
+dependency_groups = ["dev"]
+
+[tool.tox.env.lint]
+commands = [
+    ["ruff", "check", "--fix", "."],
+    ["ruff", "format", "."],
+]
+
+[tool.tox.env.mypy]
+commands = [["mypy"]]
+
+[tool.tox.env.tests]
+commands = [["pytest", "-q", { replace = "posargs", extend = true }]]
+
+# https://coverage.readthedocs.io/en/latest/config.html
+[tool.coverage.report]
+exclude_lines = [
+    "@abstractmethod",
+    "if TYPE_CHECKING:",
+    "@overload",
+    "class .*Protocol",
+    "except ImportError",
+    "except PackageNotFoundError",
+    "raise NotImplementedError()",
+]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = [
+    "tests",
+]
+addopts = "-p no:warnings"
+
+[dependency-groups]
+dev = [
+    "acquire-zarr>=0.10.0",
+    "mypy>=2.3.1",
+    "ome-writers[acquire-zarr]>=0.3.2",
+    "prek>=0.5.3",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.16.8",
+    "tox-uv-bare>=1.36.0",
+]

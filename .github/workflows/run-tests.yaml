@@ -1,0 +1,73 @@
+name: Run tests
+
+on:
+  workflow_call:
+    secrets:
+      codecov_token:
+        required: false
+
+jobs:
+  test:
+    name: ${{ matrix.os }} py${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.1.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run tests with coverage
+        run: |
+            uv run --locked coverage run -p -m pytest --color=yes
+        shell: bash
+
+      - name: Upload coverage data
+        uses: actions/upload-artifact@v7
+        with:
+          name: covreport-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: ./.coverage*
+          include-hidden-files: true
+
+  upload_coverage:
+    name: Upload coverage
+    if: ${{ !cancelled() }}
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.1.0
+
+      - name: Download coverage data
+        uses: actions/download-artifact@v8
+        with:
+          pattern: covreport-*
+          path: covreports
+          merge-multiple: true
+
+      - name: Combine coverage data
+        run: |
+          uv run coverage combine covreports
+          uv run coverage xml -o coverage.xml
+          uv run coverage report
+          uv run coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload to codecov
+        uses: codecov/codecov-action@v7
+        with:
+          fail_ci_if_error: true
+          verbose: true
+          token: ${{ secrets.codecov_token }}
