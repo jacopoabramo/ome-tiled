@@ -33,7 +33,7 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
-          python-version: "3.14"
+          python-version: "3.13"
 
       # the environment and the flags come from [tool.tox] in pyproject.toml,
       # so this runs what a contributor runs
