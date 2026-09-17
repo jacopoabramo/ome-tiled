@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Dates are specified in the format `DD-MM-YYYY`.
 
-## Unreleased
+## [0.1.1] - 17-09-2026
+
+### Changed
+
+- Cleanup some build configuration.
+
+## [0.1.0] - 17-09-2026
 
 Initial release.
+
+[0.1.1]: https://github.com/redsun-acquisition/ome-tiled/compare/v0.1.0...0.1.1
+[0.1.0]: https://github.com/redsun-acquisition/ome-tiled/tree/v0.1.0
