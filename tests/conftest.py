@@ -10,6 +10,7 @@ import zarr
 from tiled.catalog import in_memory
 from tiled.client import Context, from_context
 from tiled.server.app import build_app
+from tiled.server.simple import SimpleTiledServer
 
 from ome_tiled import OME_ZARR_MIMETYPE, OmeZarrAdapter
 
@@ -49,6 +50,15 @@ def client(tmp_path: Path, data_dir: Path) -> Iterator[Container]:
 
 
 @pytest.fixture
+def embedded_server(tmp_path: Path, data_dir: Path) -> Iterator[SimpleTiledServer]:
+    server = SimpleTiledServer(
+        directory=tmp_path / "server", readable_storage=[data_dir]
+    )
+    yield server
+    server.close()
+
+
+@pytest.fixture
 def ome_writers_acquire_zarr_store(data_dir: Path) -> Path:
     return write_ome_writers(data_dir / "acquire", "acquire-zarr")
 
@@ -79,6 +89,14 @@ def ngff05_store(data_dir: Path) -> Path:
     multiscale = {"axes": FOUR_AXES, "datasets": DATASETS}
     attributes = {"ome": {"version": "0.5", "multiscales": [multiscale]}}
     return write_by_hand(data_dir / "v05.zarr", 3, attributes)
+
+
+@pytest.fixture
+def custom_axis_store(data_dir: Path) -> Path:
+    axes = [{"name": "pattern", "type": "other"}, *FOUR_AXES[1:]]
+    multiscale = {"axes": axes, "datasets": DATASETS}
+    attributes = {"ome": {"version": "0.5", "multiscales": [multiscale]}}
+    return write_by_hand(data_dir / "custom.zarr", 3, attributes)
 
 
 @pytest.fixture

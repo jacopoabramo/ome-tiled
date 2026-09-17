@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any
 
 import anyio
 import pytest
+from tiled.client import from_uri
 from tiled.client.register import register
 from tiled.structures.core import StructureFamily
 from tiled.structures.data_source import Asset, DataSource, Management
@@ -15,6 +16,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     from tiled.client.container import Container
+    from tiled.server.simple import SimpleTiledServer
 
 FOUR_DIMS = ("t", "z", "y", "x")
 THREE_DIMS = ("t", "y", "x")
@@ -49,6 +51,7 @@ def register_image(client: Container, key: str, uri: str) -> Any:
         ("acquire_zarr_store", "/det", THREE_DIMS, (2, 16, 16)),
         ("ngff04_store", "", FOUR_DIMS, (2, 3, 8, 8)),
         ("ngff05_store", "", FOUR_DIMS, (2, 3, 8, 8)),
+        ("custom_axis_store", "", ("pattern", "z", "y", "x"), (2, 3, 8, 8)),
     ],
 )
 def test_registered_image_reads_with_axis_names(
@@ -159,3 +162,17 @@ def test_extension_route_misses_a_store_named_zarr(
 
     assert client["acquire"].structure().dims == FOUR_DIMS
     assert client["run"]["det"]["0"].structure().dims is None
+
+
+def test_embedded_server_reads_images_once_the_adapter_is_inserted(
+    embedded_server: SimpleTiledServer, ome_writers_acquire_zarr_store: Path
+) -> None:
+    embedded_server.catalog.context.adapters_by_mimetype.maps[0][OME_ZARR_MIMETYPE] = (
+        OmeZarrAdapter
+    )
+    client = from_uri(embedded_server.uri)
+
+    node = register_image(client, "image", ome_writers_acquire_zarr_store.as_uri())
+
+    assert node.structure().dims == FOUR_DIMS
+    assert node.read().shape == (2, 3, 8, 8)
