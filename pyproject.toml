@@ -54,7 +54,6 @@ disable_error_code = [
 pretty = true
 strict = true
 warn_unreachable = true
-warn_no_return = true
 
 [tool.coverage.run]
 source = ["ome_tiled"]
@@ -63,9 +62,6 @@ source = ["ome_tiled"]
 # the repository under a different absolute path
 [tool.coverage.paths]
 source = ["src/", "*/src/"]
-
-[tool.ruff]
-fix = true
 
 [tool.ruff.format]
 docstring-code-format = true
@@ -77,7 +73,7 @@ extend-select = [
     "TC", # enable type check imports
     "FA102", # force __future__ imports
 ]
-ignore = ["D100","D104"] # https://docs.astral.sh/ruff/rules/undocumented-public-package/
+ignore = ["D100", "D104"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*.py" = [
@@ -112,20 +108,10 @@ commands = [["mypy"]]
 [tool.tox.env.tests]
 commands = [["pytest", "-q", { replace = "posargs", extend = true }]]
 
-# https://coverage.readthedocs.io/en/latest/config.html
 [tool.coverage.report]
-exclude_lines = [
-    "@abstractmethod",
-    "if TYPE_CHECKING:",
-    "@overload",
-    "class .*Protocol",
-    "except ImportError",
-    "except PackageNotFoundError",
-    "raise NotImplementedError()",
-]
+exclude_lines = ["if TYPE_CHECKING:"]
 
 [tool.pytest.ini_options]
-minversion = "6.0"
 testpaths = [
     "tests",
 ]
@@ -134,11 +120,11 @@ addopts = "-p no:warnings"
 [dependency-groups]
 dev = [
     "acquire-zarr>=0.10.0",
+    "coverage>=7.16.1",
     "mypy>=2.3.1",
     "ome-writers[acquire-zarr,zarr-python]>=0.3.2",
     "prek>=0.5.3",
     "pytest>=9.1.1",
-    "pytest-cov>=7.1.0",
     "ruff>=0.16.8",
     "tox-uv-bare>=1.36.0",
 ]
