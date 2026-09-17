@@ -68,24 +68,31 @@ tox.
 
 ## Architecture invariants
 
-- **Standalone.** The package depends on `tiled[server]` and `zarr` and on
-  nothing written for a particular application. No import, name, fixture or
+- **Standalone.** The package depends on `tiled[server]`, `zarr` and
+  `yaozarrs`, and on nothing written for a particular application. `pydantic`
+  arrives through `yaozarrs` and is not declared. No import, name, fixture or
   example refers to one.
 - **Three public names**, `OME_ZARR_MIMETYPE`, `OmeZarrAdapter` and
   `detect`, re-exported by `__init__.py`. Every module is private. `tiled`
   imports configuration strings with `import_object`, which resolves
   `ome_tiled:OmeZarrAdapter` and `ome_tiled:detect` through the package, so no
   module needs to be public for a server configuration to reach it.
-- **`_ngff.py` imports nothing from `tiled`.** The format rules live there and
-  are tested without a catalog. `detect` lives there because it is a format
+- **`_ngff.py` imports nothing from `tiled`.** The format rules live there,
+  built on `yaozarrs`, and are tested without a catalog. `detect` lives there because it is a format
   question.
-- **An image is a group carrying `multiscales`**: in `.zattrs` for NGFF 0.4, in
-  `attributes.ome` for 0.5. A registration naming the image group and one
-  naming its `0` array read the same way, as one array whose `dims` are the
-  axes' names, at level `0`.
-- **Unsupported layouts pass through untouched.** `bioformats2raw.layout` and
-  HCS `plate`/`well` groups go to `ZarrGroupAdapter` as they would without
-  this package, with a log line saying so. Never guess at them.
+- **An image is a group `yaozarrs` validates as an image or label image**,
+  NGFF 0.4 or 0.5. A registration naming the image group and one naming its
+  `0` array read the same way, as one array whose `dims` are the axes' names,
+  at level `0`, with the axes under `axes` in the metadata.
+- **Everything else passes through untouched.** Every other NGFF layout
+  `yaozarrs` recognizes, and every group whose NGFF metadata fails validation,
+  goes to `ZarrGroupAdapter` as it would without this package, with a log line
+  saying why. Validation is strict on purpose: never guess at a malformed file.
+- **A catalog node keeps what was stored at registration.** `tiled` serves a
+  registered node's structure and metadata from its database, not from the
+  adapter. `tiled register` stores the adapter's own; anyone registering by
+  hand stores `OmeZarrAdapter.from_uris(uri).structure()` and `.metadata()`,
+  or the node reads without `dims`.
 - **The adapter never writes.** It inherits `ZarrGroupAdapter`'s read-only
   behaviour; nothing here adds `write`, `write_block` or `patch`.
 
@@ -139,9 +146,14 @@ tox.
 - Tests are flat under `tests/`, one module per private module. Shared fixtures
   belong in `conftest.py`.
 - **Every reading behaviour is tested on real layouts and both NGFF
-  versions**: a store written by `ome-writers`, one written by `acquire-zarr`
-  with `is_ngff=True` and two keys, and the hand-written 0.4 and 0.5 fixtures.
-  Each is registered once by group path and once by array path.
+  versions**: stores written by `ome-writers` with its `acquire-zarr` and
+  `zarr-python` backends, one written by `acquire-zarr` with `is_ngff=True`
+  and two keys, and hand-written 0.4 and 0.5 fixtures carrying
+  `coordinateTransformations`, plus one without them that must read as plain
+  Zarr. Each image is registered once by group path and once by array path.
+- A store fixture named in a parametrize list is fetched with
+  `request.getfixturevalue`, which cannot resolve a parametrized fixture: give
+  each variant its own fixture.
 - **Test objects go at the top of the module, after the imports**: fixtures and
   helpers, before the first test. A test body is then the case it exercises
   and nothing else.
@@ -150,8 +162,10 @@ tox.
   client, and assert on what the client sees.
 - Parametrize normal and edge cases together in one `@pytest.mark.parametrize`.
 - **Falsify a test before trusting it.** A test asserting `dims` must fail
-  against plain `tiled` with this package's adapter removed from
-  `adapters_by_mimetype`.
+  with this package's adapter replaced by `tiled`'s `ZarrAdapter`: in
+  `adapters_by_mimetype` for a group path, where the adapter opens the image at
+  read time, and in the registration for an array path, where only the stored
+  structure carries the names.
 - A property only a type checker can observe is tested in `tests/typing/` with
   `typing.assert_type`, in a module pytest never collects.
 
