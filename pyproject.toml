@@ -64,9 +64,6 @@ source = ["ome_tiled"]
 [tool.coverage.paths]
 source = ["src/", "*/src/"]
 
-[tool.ruff]
-fix = true
-
 [tool.ruff.format]
 docstring-code-format = true
 
