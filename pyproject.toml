@@ -32,9 +32,9 @@ dependencies = [
 ]
 
 [project.urls]
-bugs = "https://github.com/jacopoabramo/ome-tiled/issues"
-changelog = "https://github.com/jacopoabramo/ome-tiled/blob/main/CHANGELOG.md"
-homepage = "https://github.com/jacopoabramo/ome-tiled"
+bugs = "https://github.com/redsun-acquisition/ome-tiled/issues"
+changelog = "https://github.com/redsun-acquisition/ome-tiled/blob/main/CHANGELOG.md"
+homepage = "https://github.com/redsun-acquisition/ome-tiled"
 
 [tool.hatch.version]
 source = "vcs"
