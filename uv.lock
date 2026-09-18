@@ -513,6 +513,23 @@ wheels = [
 ]
 
 [[package]]
+name = "bluesky-tiled-plugins"
+version = "2.0.11"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dask" },
+    { name = "event-model" },
+    { name = "mongoquery" },
+    { name = "pytz" },
+    { name = "tiled", extra = ["client"] },
+    { name = "tzlocal" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d3/74/09a8e31991eeb72d369142a7e02f8947ba182321e70b1cf9f8ca0de4289a/bluesky_tiled_plugins-2.0.11.tar.gz", hash = "sha256:1a9acac4c40fa9d2740a1f1cdf63a98cc598a6208267a71b9ab428927403d24d", size = 105156, upload-time = "2026-09-09T17:09:09.003Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1f/12/3c5928bd530b339f73e670ec41a80dcfe76b3d531b3a3cbe74e18e9de1ba/bluesky_tiled_plugins-2.0.11-py3-none-any.whl", hash = "sha256:a40f850e7ae7bec8a28b99e3bf260f6e9bedae04c109285bcd10b6acb579af4a", size = 65758, upload-time = "2026-09-09T17:09:07.746Z" },
+]
+
+[[package]]
 name = "botocore"
 version = "1.43.75"
 source = { registry = "https://pypi.org/simple" }
@@ -848,6 +865,21 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/d3/38/af70d7ab1ae9d4da450eeec1fa3918940a5fafb9055e934af8d6eb0c2313/et_xmlfile-2.0.0.tar.gz", hash = "sha256:dab3f4764309081ce75662649be815c4c9081e88f0837825f90fd28317d4da54", size = 17234, upload-time = "2024-10-25T17:25:40.039Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c1/8b/5fe2cc11fee489817272089c4203e679c63b570a5aaeb18d852ae3cbba6a/et_xmlfile-2.0.0-py3-none-any.whl", hash = "sha256:7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa", size = 18059, upload-time = "2024-10-25T17:25:39.051Z" },
+]
+
+[[package]]
+name = "event-model"
+version = "1.24.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "jsonschema" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9f/bc/e181740329de157a5f5ba985ab8da558a77ceb710532a1636e9dc2a42e53/event_model-1.24.0.tar.gz", hash = "sha256:18e632d52a7caa0987d5d7198bc23e06f2e4ca5e8794d384d74f9e0c34a773d8", size = 185208, upload-time = "2026-06-03T10:58:03.71Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b2/9e/d410b0ff08a2519d197928afdc1aa36eb47e197f5ba683389b00e216f83c/event_model-1.24.0-py3-none-any.whl", hash = "sha256:87e9415b349f9c9aa7576090b671442e49548ea9b63c5e8ab64573f4df1c2d61", size = 76666, upload-time = "2026-06-03T10:58:02.598Z" },
 ]
 
 [[package]]
@@ -1548,6 +1580,18 @@ wheels = [
 ]
 
 [[package]]
+name = "mongoquery"
+version = "1.4.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "six" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f1/ec/8e0ddb347c6c5b94e0147b2b9ea1fd9dbfda5d222d0e529996445c30faaa/mongoquery-1.4.3.tar.gz", hash = "sha256:e901f86ee5af7ef6eda2f2c26f4bd2cfe8380d81f178b7e3607dbbcdcee97239", size = 8199, upload-time = "2025-09-16T10:56:06.339Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ce/33/7ce3f09d91a0ca5db7cca67671d865b7c8310b8b59eff287a711919641f0/mongoquery-1.4.3-py3-none-any.whl", hash = "sha256:8be47635c5e361c9f363b7a901a2b86649687491b7aaca2d12601eff41cb6128", size = 6421, upload-time = "2025-09-16T10:56:05.412Z" },
+]
+
+[[package]]
 name = "msgpack"
 version = "1.2.2"
 source = { registry = "https://pypi.org/simple" }
@@ -2014,10 +2058,17 @@ dependencies = [
     { name = "zarr", version = "3.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
 
+[package.optional-dependencies]
+bluesky = [
+    { name = "bluesky-tiled-plugins" },
+]
+
 [package.dev-dependencies]
 dev = [
     { name = "acquire-zarr" },
+    { name = "bluesky-tiled-plugins" },
     { name = "coverage" },
+    { name = "event-model" },
     { name = "mypy" },
     { name = "ome-writers", extra = ["acquire-zarr", "zarr-python"] },
     { name = "prek" },
@@ -2028,15 +2079,19 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "bluesky-tiled-plugins", marker = "extra == 'bluesky'", specifier = ">=2.0.11" },
     { name = "tiled", extras = ["server"], specifier = ">=0.2.18" },
     { name = "yaozarrs", specifier = ">=0.3.2" },
     { name = "zarr", specifier = ">=3.1.6" },
 ]
+provides-extras = ["bluesky"]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "acquire-zarr", specifier = ">=0.10.0" },
+    { name = "bluesky-tiled-plugins", specifier = ">=2.0.11" },
     { name = "coverage", specifier = ">=7.16.1" },
+    { name = "event-model", specifier = ">=1.24.0" },
     { name = "mypy", specifier = ">=2.3.1" },
     { name = "ome-writers", extras = ["acquire-zarr", "zarr-python"], specifier = ">=0.3.2" },
     { name = "prek", specifier = ">=0.5.3" },
@@ -2629,6 +2684,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pytz"
+version = "2026.3.post1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/fb/48/fb042503b6ca6cd271261dc559fd6432f7d8c713153e9ec5c591af4dfc1c/pytz-2026.3.post1.tar.gz", hash = "sha256:2211d3fcf9a797d3405cac96ac7f61d80e6a644f72a3309607282fe8a2010c5d", size = 319745, upload-time = "2026-07-25T15:12:07.385Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0f/7b/39c34ca613b0b198cb866466651b26b045e2009864c5183c979a3b83f383/pytz-2026.3.post1-py2.py3-none-any.whl", hash = "sha256:dd95840dd199baea12d9cc096a1d452caa6596a1c1e4b5f3dbd1541855d5e815", size = 508283, upload-time = "2026-07-25T15:12:05.782Z" },
+]
+
+[[package]]
 name = "pyyaml"
 version = "6.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -3030,6 +3094,27 @@ wheels = [
 ]
 
 [package.optional-dependencies]
+client = [
+    { name = "awkward" },
+    { name = "blosc2" },
+    { name = "dask", extra = ["array", "dataframe"] },
+    { name = "entrypoints" },
+    { name = "lz4" },
+    { name = "ndindex" },
+    { name = "numba" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "pandas" },
+    { name = "pyarrow" },
+    { name = "ragged" },
+    { name = "rich" },
+    { name = "sparse" },
+    { name = "stamina" },
+    { name = "watchfiles" },
+    { name = "websockets" },
+    { name = "xarray" },
+    { name = "zstandard" },
+]
 server = [
     { name = "adbc-driver-manager" },
     { name = "adbc-driver-postgresql" },
@@ -3183,6 +3268,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/e4/31/3d74fa778a63b98b7374323befcc0be5ab3bd94afd4096a0124e7379152c/tzdata-2026.4.tar.gz", hash = "sha256:f1b8bd365d8d210c55353f4d7f8d6d8561c0ba50d704b700d195a9424bba0d79", size = 199350, upload-time = "2026-09-12T12:56:03.251Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f9/bc/8737e8d54cf51106118039b83f485a4783112fab49ea9d044b234978a46e/tzdata-2026.4-py2.py3-none-any.whl", hash = "sha256:c2169a8b0a7a5e9674da5a135ccdfb2b3e671b333ed9fed17b41f73c34476e81", size = 347494, upload-time = "2026-09-12T12:56:01.67Z" },
+]
+
+[[package]]
+name = "tzlocal"
+version = "5.4.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "tzdata", marker = "sys_platform == 'win32'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/81/5b/879b2f932adfa7a053c360d50bc896c977fa6426109185f7c12ebdd0cb9d/tzlocal-5.4.4.tar.gz", hash = "sha256:8dbb8660838688a7b6ba4fed31d18dedf842afb4d47ca050d6d891c2c15f3be4", size = 31170, upload-time = "2026-06-29T08:03:40.026Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9e/a4/017a7a6cbe387d961a688ec31364ae60a5c4e22c96ae9921b79a947c855d/tzlocal-5.4.4-py3-none-any.whl", hash = "sha256:aae09f0126a8a86fa736be266eb4a471380d26a0de3bc14844e7821fee3e2a15", size = 18115, upload-time = "2026-06-29T08:03:38.666Z" },
 ]
 
 [[package]]

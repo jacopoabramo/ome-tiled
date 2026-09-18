@@ -11,11 +11,13 @@ ome-tiled/
 |   |-- __init__.py      the hub: re-exports and __all__, defines nothing
 |   |-- py.typed
 |   |-- _ngff.py         OME_ZARR_MIMETYPE, reading multiscales, detect
-|   `-- _adapter.py      OmeZarrAdapter
+|   |-- _adapter.py      OmeZarrAdapter
+|   `-- bluesky.py       OmeZarrConsolidator, register_consolidator (bluesky extra)
 |-- tests/
 |   |-- conftest.py      in-process catalog, hand-written NGFF 0.4 and 0.5 stores
 |   |-- test_ngff.py     format rules, no tiled server involved
-|   `-- test_adapter.py  registration and reading through a catalog
+|   |-- test_adapter.py  registration and reading through a catalog
+|   `-- test_bluesky.py  runs written through TiledWriter
 |-- .github/workflows/   CI: code analysis, tests, release
 |-- .claude/             agents, commands, settings
 |-- pyproject.toml       dependencies and all tool config: ruff, mypy, pytest, coverage, tox
@@ -70,13 +72,18 @@ tox.
 
 - **Standalone.** The package depends on `tiled[server]`, `zarr` and
   `yaozarrs`, and on nothing written for a particular application. `pydantic`
-  arrives through `yaozarrs` and is not declared. No import, name, fixture or
-  example refers to one.
+  arrives through `yaozarrs` and is not declared. The `bluesky` extra adds
+  `bluesky-tiled-plugins`, needed only by `ome_tiled.bluesky`. No import, name,
+  fixture or example refers to an application.
 - **Three public names**, `OME_ZARR_MIMETYPE`, `OmeZarrAdapter` and
   `detect`, re-exported by `__init__.py`. Every module is private. `tiled`
   imports configuration strings with `import_object`, which resolves
   `ome_tiled:OmeZarrAdapter` and `ome_tiled:detect` through the package, so no
   module needs to be public for a server configuration to reach it.
+- **`ome_tiled.bluesky` is the one public module.** It imports
+  `bluesky-tiled-plugins`, which the package must not need, so `__init__.py`
+  cannot re-export it. `import ome_tiled` never imports it, and
+  `test_ngff.py` checks that in a fresh interpreter.
 - **`_ngff.py` imports nothing from `tiled`.** The format rules live there,
   built on `yaozarrs`, and are tested without a catalog. `detect` lives there because it is a format
   question.

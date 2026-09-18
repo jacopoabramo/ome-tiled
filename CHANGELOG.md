@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Dates are specified in the format `DD-MM-YYYY`.
 
+## Unreleased
+
+### Added
+
+- **`OmeZarrConsolidator`** (`ome_tiled.bluesky`) - a `bluesky-tiled-plugins`
+  consolidator for `application/x-ome-zarr` resources, registering the image
+  with the shape, chunks and axis names the store holds.
+- **`register_consolidator`** (`ome_tiled.bluesky`) - makes `TiledWriter` use
+  `OmeZarrConsolidator` for `application/x-ome-zarr` resources:
+
+  ```python
+  from ome_tiled.bluesky import register_consolidator
+
+  register_consolidator()
+  ```
+
+- A `bluesky` extra, with `bluesky-tiled-plugins`, which `ome_tiled.bluesky`
+  needs.
+
 ## [0.1.1] - 17-09-2026
 
 ### Changed
