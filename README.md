@@ -28,6 +28,9 @@ pip install ome-tiled
 Install it on the server, and also wherever `tiled register` runs: registering
 opens each store through the adapter on the registering side.
 
+To write Bluesky runs into a catalog with `bluesky-tiled-plugins`, install the
+`bluesky` extra: `uv add "ome-tiled[bluesky]"`.
+
 ## Usage
 
 Serve a directory, letting `ome-tiled` find the OME-Zarr stores in it:
@@ -136,6 +139,32 @@ client.new(
 
 The URI may name the image group or its full-resolution array; both read the
 same way.
+
+### Writing runs with `TiledWriter`
+
+`bluesky-tiled-plugins`' `TiledWriter` registers each data key of a run from its
+`StreamResource` document, with a structure computed from the documents: the
+number of rows times the shape of each. A detector writing a multidimensional
+OME-Zarr store frame by frame describes a stack of frames, which is not the
+shape of the store, and the node cannot be read. Registering the consolidator
+this package provides makes `TiledWriter` store the image as the store holds
+it, with its shape, chunks and axis names:
+
+```python
+from bluesky import RunEngine
+from bluesky_tiled_plugins import TiledWriter
+from tiled.client import from_uri
+
+from ome_tiled.bluesky import register_consolidator
+
+register_consolidator()
+RE = RunEngine()
+RE.subscribe(TiledWriter(from_uri("http://localhost:8000", api_key="...")))
+```
+
+The detector's `StreamResource` gives `application/x-ome-zarr` as the mimetype
+and the store, or its image, as the URI. The server needs `OmeZarrAdapter`
+registered for that mimetype, as above.
 
 ## What it reads
 

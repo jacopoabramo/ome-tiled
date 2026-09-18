@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import subprocess
+import sys
 from typing import TYPE_CHECKING, Any
 
 import pytest
@@ -41,6 +43,13 @@ CONFIGURATION_STRINGS = [
 def test_configuration_strings_resolve_through_the_package(path: str) -> None:
     name = path.partition(":")[2]
     assert import_object(path) is getattr(ome_tiled, name)
+
+
+def test_the_package_imports_without_the_bluesky_extra() -> None:
+    """Only ``ome_tiled.bluesky`` needs ``bluesky-tiled-plugins``."""
+    code = "import sys, ome_tiled; assert 'bluesky_tiled_plugins' not in sys.modules"
+
+    subprocess.run([sys.executable, "-c", code], check=True)
 
 
 @pytest.mark.parametrize(
